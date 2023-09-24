@@ -1291,7 +1291,15 @@
     <div class="container">
       <div class="counter-inside" id="IndexCounterParent">
         <div class="count-up">
-          <div class="counter-count">{{Count}}</div>
+          <div class="counter-count">50 dfm</div>
+          <div class="counter-text">{{Title}}</div>
+        </div>
+        <div class="count-up">
+          <div class="counter-count">500msdf</div>
+          <div class="counter-text">{{Title}}</div>
+        </div>
+        <div class="count-up">
+          <div class="counter-count">50msdf</div>
           <div class="counter-text">{{Title}}</div>
         </div>
       </div>
@@ -1596,36 +1604,79 @@
   {{Footer}}
   <!--Footer sections-end-->
   <script>
+    // let targetValues = [];
+    // document.querySelectorAll('.counter-count').forEach((c) => {
+    //   targetValues.push(Number(c.innerHTML))
+    //   console.log(c.innerHTML);
+    // })
+
+    // function startCountersWhenVisible() {
+    //   const counters = document.querySelectorAll('.counter-count');
+
+
+    //   counters.forEach((counter, index) => {
+    //     const counterObserver = new IntersectionObserver(entries => {
+    //       if (entries[0].isIntersecting) {
+    //         let count = 0;
+    //         const interval = setInterval(() => {
+    //           if (count <= targetValues[index]) {
+    //             counter.textContent = count;
+    //             count++;
+    //           } else {
+    //             clearInterval(interval);
+    //           }
+    //         }, 10); // Speed of counting (milliseconds)
+    //       }
+    //     });
+
+    //     counterObserver.observe(counter);
+    //   });
+    // }
+
+    // startCountersWhenVisible();
+
     let targetValues = [];
-    document.querySelectorAll('.counter-count').forEach((c) => {
-      targetValues.push(Number(c.innerHTML))
-      console.log(c.innerHTML);
-    })
+document.querySelectorAll('.counter-count').forEach((c) => {
+  const value = c.innerHTML.trim(); // Remove extra spaces
+  const numericValue = parseFloat(value.match(/[\d.]+/)); // Extract numeric part
+  const nonNumericValue = value.replace(/[\d.]+/, ''); // Extract non-numeric part
+  targetValues.push({ numericValue, nonNumericValue });
+  console.log(numericValue, nonNumericValue);
+});
 
-    function startCountersWhenVisible() {
-      const counters = document.querySelectorAll('.counter-count');
+function startCountersWhenVisible() {
+  const counters = document.querySelectorAll('.counter-count');
+  let maxTargetValue = Math.max(...targetValues.map(value => value.numericValue));
 
-
-      counters.forEach((counter, index) => {
-        const counterObserver = new IntersectionObserver(entries => {
-          if (entries[0].isIntersecting) {
-            let count = 0;
-            const interval = setInterval(() => {
-              if (count <= targetValues[index]) {
-                counter.textContent = count;
-                count++;
-              } else {
-                clearInterval(interval);
-              }
-            }, 10); // Speed of counting (milliseconds)
+  counters.forEach((counter, index) => {
+    const counterObserver = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        let count = 0;
+        const duration = 1000; // Set the duration for all counters (in milliseconds)
+        const increment = targetValues[index].numericValue / (duration / 10);
+        
+        const interval = setInterval(() => {
+          if (count <= targetValues[index].numericValue) {
+            counter.textContent = Math.floor(count) + targetValues[index].nonNumericValue;
+            count += increment;
+          } else {
+            clearInterval(interval);
+            counter.textContent = targetValues[index].numericValue + targetValues[index].nonNumericValue;
           }
-        });
+        }, 15); // Speed of counting (milliseconds)
+      }
+    });
 
-        counterObserver.observe(counter);
-      });
-    }
+    counterObserver.observe(counter);
+  });
+}
 
-    startCountersWhenVisible();
+startCountersWhenVisible();
+
+
+
+
+
 
 
     let slideIndex = 0;
